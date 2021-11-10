@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% if request.user.is_authenticated and not request.user.is_superuser %}
+     <div class="alert alert-warning" role="alert">
+                <div class="d-flex">
+                    <div class="p-2">Приветствую, {{ request.user }}!</div>
+                    <div class="ml-auto p-2">
+                        <form method="get" action="{% url 'logout' %}">
+                            <button type="submit" class="btn btn-outline-danger" value="Logout"> Выйти из
+                                аккаунта
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+      {% elif request.user.is_superuser %}
+           <div class="alert alert-warning" role="alert">
+                <div class="d-flex">
+                    <div class="p-2">Аккаунт администратора - {{ request.user }}!</div>
+                    <div class="ml-auto p-2">
+                         <form method="get" action="{% url 'logout' %}">
+                            <button type="submit" class="btn btn-outline-danger" value="Logout"> Выйти из
+                                аккаунта
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+        <a href="{% url 'login' %}">Login</a>
+        <br>
+        <a href="{% url 'register' %}">Registration</a>
+        <br>
+        <br>
+
+{% endif %}
+    <br>
+        <br>
+   <div class="p-2">
+
+
+
+        <form method="get" action= "{% url 'main' %}">
+
+
+                <button type="submit" class="btn btn-warning" value="Update"> Back to main page </button>
+            </form>
+    </div>
+     {% for post in object_list %}
+
+                    <div style="color: whitesmoke">
+                        <div class="d-flex">
+                            <div class="p-2">
+                                <img src="/media/{{ post.picture }}" width="250" height="170">
+                            </div>
+                            <div class="p-2">
+                                <h2 style="color: #e4b101">{{ post.title }}</h2>
+                                <p> {{ post.content}}</p>
+
+                                <p>Автор поста: {{ post.author}}</p>
+                            <br>
+                            <div class="p-2">
+
+
+
+                                <p> <div>
+                                <form method="get" action="{% url 'comments'  %}">
+                                    <input  type="hidden" name="post_id" value="{{ post.pk }}">
+                                    <button type="submit" class="btn btn-warning" value="Update"> Check comments </button>
+                                </form>
+                            </div>
+                            </div>
+
+                            </div>
+                        </div>
+                    </div>
+                                {% endfor %}
+
+{% endblock %}

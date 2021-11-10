@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div style="color: #e4b101; position: center; text-align: center">
+      <h1>TZ Blog</h1></div>
+    <br>
+
+  {% if request.user.is_authenticated and not request.user.is_superuser %}
+     <div class="alert alert-warning" role="alert">
+                <div class="d-flex">
+                    <div class="p-2">You are welcome, {{ request.user }}!</div>
+                    <div class="ml-auto p-2">
+                        <form method="get" action="{% url 'logout' %}">
+                            <button type="submit" class="btn btn-outline-danger" value="Logout"> Выйти из
+                                аккаунта
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+      {% elif request.user.is_superuser %}
+           <div class="alert alert-warning" role="alert">
+                <div class="d-flex">
+                    <div class="p-2">Аккаунт администратора - {{ request.user }}!</div>
+                    <div class="ml-auto p-2">
+                         <form method="get" action="{% url 'logout' %}">
+                            <button type="submit" class="btn btn-outline-danger" value="Logout"> Выйти из
+                                аккаунта
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+
+      <form method="get" action= "{% url 'login'  %}">
+
+
+                <button type="submit" class="btn btn-warning" value="Update"> Login </button>
+            </form>
+        <br>
+
+      <form method="get" action= "{% url 'register'  %}">
+
+
+                <button type="submit" class="btn btn-warning" value="Update"> Registration </button>
+            </form>
+        <br>
+        <br>
+{% endif %}
+    {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-danger" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    <br>
+    {% if request.user.is_authenticated %}
+
+
+        <form method="get" action= "{% url 'create' %}">
+
+
+                <button type="submit" class="btn btn-warning" value="Update"> Create post </button>
+            </form>
+
+            <br>
+
+        <form method="get" action= "{% url 'my_posts'  %}">
+
+
+                <button type="submit" class="btn btn-warning" value="Update"> Мои посты </button>
+            </form>
+    {% endif %}
+     {% for post in object_list %}
+
+                    <div style="color: whitesmoke">
+                        <div class="d-flex">
+                            <div class="p-2">
+                                <img src="/media/{{ post.picture }}" width="185" height="150">
+                            </div>
+                            <div class="p-2">
+                                <h2 style="color: #e4b101">Тема поста: {{ post.title }}</h2>
+
+                                <p>Автор поста: {{ post.author}}</p>
+                                <p> <div>
+                                <form method="get" action="{% url 'main_post'  %}">
+                                    <input  type="hidden" name="post_id" value="{{ post.pk }}">
+                                    <button type="submit" class="btn btn-warning" value="Update"> Перейти на главную страницу поста </button>
+                                </form>
+                            </div>
+                            </p>
+                                {% if request.user.is_superuser %}
+                                <p><div>
+                                <form method="post" action="{% url 'delete_post' post.pk  %}">
+                                      {% csrf_token %}
+                                    <button type="submit" class="btn btn-warning" value="Update"> Удалить пост </button>
+                                </form>
+
+                            </div></p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+        <hr style="background-color: #e4b101">
+                                {% endfor %}
+
+
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% if request.user.is_authenticated and not request.user.is_superuser %}
+     <div class="alert alert-warning" role="alert">
+                <div class="d-flex">
+                    <div class="p-2">Приветствую, {{ request.user }}!</div>
+                    <div class="ml-auto p-2">
+                        <form method="get" action="{% url 'logout' %}">
+                            <button type="submit" class="btn btn-outline-danger" value="Logout"> Выйти из
+                                аккаунта
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+      {% elif request.user.is_superuser %}
+           <div class="alert alert-warning" role="alert">
+                <div class="d-flex">
+                    <div class="p-2">Аккаунт администратора - {{ request.user }}!</div>
+                    <div class="ml-auto p-2">
+                         <form method="get" action="{% url 'logout' %}">
+                            <button type="submit" class="btn btn-outline-danger" value="Logout"> Выйти из
+                                аккаунта
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+{% endif %}
+    <br>
+        <br>
+     <div class="p-2">
+
+
+
+        <form method="get" action= "{% url 'main' %}">
+
+
+                <button type="submit" class="btn btn-warning" value="Update"> Back to main page </button>
+            </form>
+    </div>
+     {% for post in object_list %}
+
+                    <div style="color: whitesmoke">
+                        <div class="d-flex">
+                            <div class="p-2">
+                                <img src="/media/{{ post.picture }}" width="250" height="170">
+                            </div>
+                            <div class="p-2">
+                                <h2 style="color: #e4b101">{{ post.title }}</h2>
+                                <p> {{ post.content}}</p>
+                                <div class="p-2">
+                                <img src="/media/{{ post.author.photo }}" width="120" height="70">
+                            </div>
+                                <p>Author: {{ post.author}}</p>
+                                <p> Номер телефона: {{ post.author.phone_number }}
+                                    <p>Email: {{ post.author.email }}</p>
+                            <br>
+
+
+
+                            </div>
+                        </div>
+                    </div>
+                                {% endfor %}
+     <nav aria-label="Page navigation example" style="min-height: 100%">
+  <ul class="pagination">
+   {% if page_obj.has_previous %}
+    <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+    {% endif %}
+      <li class="page-item"><a class="page-link" href="?page=1">1</a></li>
+      {% if page_obj.has_next %}
+    <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+      <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last</a></li>
+  {% endif %}
+  </ul>
+
+</nav>
+
+{% endblock %}

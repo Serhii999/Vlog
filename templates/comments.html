@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% if request.user.is_authenticated and not request.user.is_superuser %}
+     <div class="alert alert-warning" role="alert">
+                <div class="d-flex">
+                    <div class="p-2">Приветствую, {{ request.user }}!</div>
+                    <div class="ml-auto p-2">
+                        <form method="get" action="{% url 'logout' %}">
+                            <button type="submit" class="btn btn-outline-danger" value="Logout"> Выйти из
+                                аккаунта
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+      {% elif request.user.is_superuser %}
+           <div class="alert alert-warning" role="alert">
+                <div class="d-flex">
+                    <div class="p-2">Аккаунт администратора - {{ request.user }}!</div>
+                    <div class="ml-auto p-2">
+                         <form method="get" action="{% url 'logout' %}">
+                            <button type="submit" class="btn btn-outline-danger" value="Logout"> Выйти из
+                                аккаунта
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+        <a href="{% url 'login' %}">Login</a>
+        <br>
+        <a href="{% url 'register' %}">Registration</a>
+        <br>
+        <br>
+
+{% endif %}
+    <br>
+        <br>
+   <div class="p-2">
+
+
+
+        <form method="get" action= "{% url 'main' %}">
+
+
+                <button type="submit" class="btn btn-warning" value="Update"> Back to main page </button>
+            </form>
+    </div>
+ <div style="color: whitesmoke">
+                        <div class="d-flex">
+                            <div class="p-2">
+        <h4 style="color: #e4b101">Комментарии:</h4>
+                            <p>{% for comment in comments_list %}</p>
+                                <h6 style="color: #e4b101">Автор комментария: {{ comment.author }}</h6>
+                                 <div class="p-2">
+                                <p style="color: whitesmoke"> {{ comment.comment }}</p>
+                                <div class="d-flex">
+                            <div class="p-2">
+                                {% if comment.parent %}
+                                <h6 style="color: #e4b101">Ответ на комментарий Автора: {{ comment.parent.author }}</h6>
+                                     <p style="color: whitesmoke">Комментарий: {{ comment.parent.comment }} </p>
+
+                                {% endif %}
+                             {% if request.user.is_authenticated  %}
+                            <p><form style="color: whitesmoke"  method="post" action="{% url 'create_comment' %}">
+    {% csrf_token %}
+
+    {{comment_form }}
+    <input type="hidden" name="post_id" value="{{ comment.post.id }}">
+    <input type="hidden" name="parent_id" value="{{ comment.id }}">
+
+   <input type="hidden" name="author_id" value="{{ request.user.id}}">
+    <button type="submit" class="btn btn-success" value="Purchase"> Комментировать </button>
+       <br>
+      {% endif %}
+
+</form></p>
+                            </div>
+                                </div>
+                                </div>
+
+                            </div>
+                                </div>
+                                </div>
+
+
+                                {% endfor %}
+                   <p>   {% if request.user.is_authenticated  %}
+  <form style="color: whitesmoke"  method="post" action="{% url 'create_comment' %}">
+    {% csrf_token %}
+
+    {{ comment_form }}
+    <input type="hidden" name="post_id" value="{{ request.GET.post_id }}">
+      <input type="hidden" name="parent_id" value="{{ Null }}">
+      <input type="hidden" name="author_id" value="{{ request.user.id}}">
+    <button type="submit" class="btn btn-success" value="Purchase"> Оставить коментарий </button>
+       <br>
+{% endif %}
+
+</form></p>
+
+     <nav aria-label="Page navigation example" style="min-height: 100%">
+  <ul class="pagination">
+   {% if page_obj.has_previous %}
+    <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}
+&post_id={{ request.GET.post_id }}">Previous</a></li>
+    {% endif %}
+      <li class="page-item"><a class="page-link" href="?page=1&post_id={{ request.GET.post_id }}">1</a></li>
+      {% if page_obj.has_next %}
+    <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}
+&post_id={{ request.GET.post_id }}">Next</a></li>
+      <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}
+&post_id={{ request.GET.post_id }}">Last</a></li>
+  {% endif %}
+  </ul>
+
+</nav>
+
+{% endblock %}
