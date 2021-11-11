@@ -52,15 +52,18 @@
                             <div class="p-2">
         <h4 style="color: #e4b101">Комментарии:</h4>
                             <p>{% for comment in comments_list %}</p>
-                                <h6 style="color: #e4b101">Автор комментария: {{ comment.author }}</h6>
+                                {% if comment.parent %}
+                                <h6 style="color: #e4b101">Автор комментария: {{ comment.parent.author }}</h6>
                                  <div class="p-2">
-                                <p style="color: whitesmoke"> {{ comment.comment }}</p>
+                                <p style="color: whitesmoke"> {{ comment.parent.comment }}</p>
                                 <div class="d-flex">
                             <div class="p-2">
-                                {% if comment.parent %}
-                                <h6 style="color: #e4b101">Ответ на комментарий Автора: {{ comment.parent.author }}</h6>
-                                     <p style="color: whitesmoke">Комментарий: {{ comment.parent.comment }} </p>
 
+                                <h6 style="color: #e4b101">Ответ на комментарий Автора: {{ comment.author }}</h6>
+                                     <p style="color: whitesmoke">Комментарий: {{ comment.comment }} </p>
+        {% else %}
+                                     <h6 style="color: #e4b101">Комментарий Автора: {{ comment.author }}</h6>
+                                     <p style="color: whitesmoke">Комментарий: {{ comment.comment }} </p>
                                 {% endif %}
                              {% if request.user.is_authenticated  %}
                             <p><form style="color: whitesmoke"  method="post" action="{% url 'create_comment' %}">
@@ -89,7 +92,7 @@
                    <p>   {% if request.user.is_authenticated  %}
   <form style="color: whitesmoke"  method="post" action="{% url 'create_comment' %}">
     {% csrf_token %}
-
+{{ form|crispy  }}
     {{ comment_form }}
     <input type="hidden" name="post_id" value="{{ request.GET.post_id }}">
       <input type="hidden" name="parent_id" value="{{ Null }}">
