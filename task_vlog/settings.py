@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'vlog',
     'phonenumber_field',
-    'crispy_forms'
+    'crispy_forms',
+    'mptt'
 ]
 
 MIDDLEWARE = [

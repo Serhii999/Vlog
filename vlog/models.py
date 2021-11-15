@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from phonenumber_field.modelfields import PhoneNumberField
+from mptt.models import MPTTModel, TreeForeignKey
 
 
 class TzUser(AbstractUser):
@@ -22,11 +23,11 @@ class Post(models.Model):
         return "{} by {}".format(self.title, self.author)
 
 
-class Comments(models.Model):
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+class Comments(MPTTModel):
+    post = models.ForeignKey(Post, related_name='comments', on_delete=models.CASCADE)
     comment = models.CharField(max_length=300)
     author = models.ForeignKey(TzUser, on_delete=models.CASCADE)
-    parent = models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE)
+    parent = TreeForeignKey('self', related_name='children', blank=True, null=True, on_delete=models.CASCADE)
 
     def __str__(self):
-        return "{} commented {}".format(self.author, self.post)
+        return "{}".format(self.comment)

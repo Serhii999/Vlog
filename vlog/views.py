@@ -74,11 +74,12 @@ class CommentListView(ListView):
     model = Comments
     template_name = 'comments.html'
     login_url = 'login/'
-    paginate_by = 5
+    paginate_by = 15
     extra_context = {'comment_form': CommentCreateForm}
 
     def get_queryset(self):
-        return super().get_queryset().filter(post_id=self.request.GET['post_id'])
+        qs = Comments.objects.filter(post_id=self.request.GET['post_id'])
+        return qs
 
 
 class DeletePostView(PermissionRequiredMixin, DeleteView):
